@@ -1,3 +1,0 @@
-def bckt_caminos(tamMatriz, origen, destino, agujerosNegros, estrellasGigantes, agujerosGusano, zonasRecarga, celdasCargaRequerida, cargaInicial, matrizInicial):
-    # Código...
-    return
