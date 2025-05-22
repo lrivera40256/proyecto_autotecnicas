@@ -16,6 +16,6 @@ function dibujar_universo(matriz) {
 
 }
 
-function dibujar_soluciones(matriz) {
+function dibujar_soluciones(soluciones) {
     console.log("Dibujando soluciones...", soluciones);
 }
