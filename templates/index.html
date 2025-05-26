@@ -3,9 +3,36 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Universo Interestelar</title>
+    <style>
+        #universo {
+            display: grid;
+            gap: 2px;
+            margin-top: 20px;
+        }
+
+        .celda {
+            width: 30px;
+            height: 30px;
+            border: 1px solid #ccc;
+            background-color: #f0f0f0;
+            text-align: center;
+            line-height: 30px;
+            font-size: 14px;
+        }
+
+        .solucion {
+            background-color: lightgreen;
+        }
+    </style>
 </head>
 <body>
+
+    <h1>Universo Interestelar</h1>
+
+    <!-- Aquí se dibuja la matriz -->
+    <div id="universo"></div>
+
     <script src="/static/js/main.js"></script>
 </body>
 </html>

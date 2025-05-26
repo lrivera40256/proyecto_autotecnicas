@@ -1,0 +1,24 @@
+{
+  "tamMatriz": {
+    "filas": 3,
+    "columnas": 3
+  },
+  "origen": [0, 0],
+  "destino": [2, 2],
+  "agujerosNegros": [
+  ],
+  "estrellasGigantes": [
+  ],
+  "agujerosGusano": [
+  ],
+  "zonasRecarga": [
+  ],
+  "celdasCargaRequerida": [
+  ],
+  "cargaInicial": 5,
+  "matrizInicial": [
+    [1, 1, 1],
+    [1, 1, 1],
+    [1, 1, 1]
+  ]
+}
