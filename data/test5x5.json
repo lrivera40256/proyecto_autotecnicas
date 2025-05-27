@@ -3,22 +3,57 @@
     "filas": 3,
     "columnas": 3
   },
-  "origen": [0, 0],
-  "destino": [2, 2],
+  "origen": [
+    0,
+    0
+  ],
+  "destino": [
+    2,
+    2
+  ],
   "agujerosNegros": [
+    [
+      1,
+      1
+    ]
   ],
-  "estrellasGigantes": [
-  ],
+  "estrellasGigantes": [],
   "agujerosGusano": [
+    {
+      "entrada": [
+        0,
+        0
+      ],
+      "salida": [
+        2,
+        1
+      ]
+    }
   ],
   "zonasRecarga": [
+    [
+      2,
+      0,
+      7
+    ]
   ],
-  "celdasCargaRequerida": [
-  ],
-  "cargaInicial": 5,
+  "celdasCargaRequerida": [],
+  "cargaInicial": 4,
   "matrizInicial": [
-    [1, 1, 1],
-    [1, 1, 1],
-    [1, 1, 1]
+    [
+      1,
+      1,
+      1
+    ],
+    [
+      1,
+      1,
+      2
+    ],
+    [
+      1,
+      1,
+      1
+    ]
   ]
 }

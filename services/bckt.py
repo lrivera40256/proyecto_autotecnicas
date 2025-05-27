@@ -43,26 +43,34 @@ def bckt_caminos(tamMatriz, origen, destino, agujerosNegros, estrellasGigantes, 
             
             return
 
-        for e in estrellasGigantes:
+        idx_estrella = None
+        for i, e in enumerate(estrellasGigantes):
             if e[0] == origen[0] and e[1] == origen[1]:
                 print("Está en estrella")
                 enEstrella = True
+                idx_estrella = i
                 break
 
         for e in zonasRecarga:
             print("Verificando zona de recarga")
-            print(f"Zona de recarga: {e[0]}, {e[1]}, {e[2]}")
             if e[0] == origen[0] and e[1] == origen[1]:
+                print(f"Zona de recarga: {e[0]}, {e[1]}, {e[2]}")
                 print("Está en zona de recarga")
+                print(f'Carga inicial: {cargaInicial}')
                 cargaInicial *= e[2]
+                print(f'Carga después de recarga: {cargaInicial}')
                 break
 
         for e in agujerosGusano:
-            if e["entrada"][0] == origen[0] and e["entrada"][1] == origen[0]:
+            if e["entrada"][0] == origen[0] and e["entrada"][1] == origen[1]:
                 print("Está en agujero de gusano")
-                costo = matrizInicial[origen[0]][origen[1]] + matrizInicial[e["salida"][0]][e["salida"][1]]
+                costo_salida = matrizInicial[e["salida"][0]][e["salida"][1]]
+                print(f'Costo de salida: {costo_salida}')
+                cargaInicial -= costo_salida
                 origen[0], origen[1] = e["salida"][0], e["salida"][1]
-                matrizInicial[origen[0]][origen[1]] = -1
+                print(f'Nueva posición después de agujero de gusano: {origen}')
+                camino.append(origen[:])
+                matrizInicial[origen[1]][origen[0]] = -1
                 break
         
         for e in celdasCargaRequerida:
@@ -76,15 +84,19 @@ def bckt_caminos(tamMatriz, origen, destino, agujerosNegros, estrellasGigantes, 
             print("Está en estrella gigante")
             print("Entrando a backtracking con estrellas gigantes")
             agujeros_alrededor = buscar_ag(origen, MOVIMIENTOS, agujerosNegros)
+            print(agujeros_alrededor)
             for agujero in agujeros_alrededor:
                 if agujero in agujerosNegros:
-                    idx = agujerosNegros.index(agujero)
-                    agujerosNegros.pop(idx)
+                    idx_agujero = agujerosNegros.index(agujero)
+                    agujerosNegros.pop(idx_agujero)
+                    estrellasGigantes.pop(idx_estrella)
+                    nueva_pos = [origen[0] + agujero[0], origen[1] + agujero[1]]
                     bckt_caminos(
-                        tamMatriz, origen, destino, agujerosNegros, estrellasGigantes,
+                        tamMatriz, nueva_pos, destino, agujerosNegros, estrellasGigantes,
                         agujerosGusano, zonasRecarga, celdasCargaRequerida, cargaInicial, matrizInicial, soluciones, camino
                     )
-                    agujerosNegros.insert(idx, agujero)
+                    agujerosNegros.insert(idx_agujero, agujero)
+                    estrellasGigantes.insert(idx_estrella, agujero)
                     cargaInicial = cargaOriginal
                     
         for mov in MOVIMIENTOS:
@@ -165,8 +177,3 @@ def lector_json(ruta):
 if __name__ == "__main__":
     matriz = lector_json('data/test5x5.json')
     solucioneses = bckt_caminos(**matriz)
-    # # print(matriz)
-    # print("solucioneses encontradas:")
-    # for sol in solucioneses:
-    #     print(sol)
-        
