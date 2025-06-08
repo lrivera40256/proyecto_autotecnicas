@@ -12,7 +12,7 @@ def index():
 # Ruta API que devuelve el laberinto y las soluciones
 @app.route('/lab-interestelar', methods=['GET'])
 def laberinto_data():
-    matriz = lector_json('data/test5x5.json')
+    matriz = lector_json('data/lab_interestelar.json')
     print("Matriz cargada:", matriz)
     
     # Mapa cargado
