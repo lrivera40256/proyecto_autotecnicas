@@ -1,5 +1,6 @@
 from flask import jsonify
 # Definir los 8 movimientos posibles
+# (columna, fila)
 MOVIMIENTOS = [
     (0, -1),  # Arriba
     (1,-1),  # Arriba derecha
@@ -16,113 +17,102 @@ def imprimir_matriz(matriz):
         print(' '.join(str(celda) for celda in fila))
     print()
 
-def bckt_caminos(tamMatriz, origen, destino, agujerosNegros, estrellasGigantes, agujerosGusano,
-                zonasRecarga, celdasCargaRequerida, cargaInicial, matrizInicial, soluciones, camino):
-    if es_valido(origen[1], origen[0], tamMatriz, matrizInicial) and es_viable(origen[1], origen[0], matrizInicial, cargaInicial, agujerosNegros, celdasCargaRequerida, agujerosGusano):
-        camino.append(origen[:])
-        aux = matrizInicial[origen[1]][origen[0]]
-        cargaOriginal = cargaInicial
-        cargaInicial -= aux
-        matrizInicial[origen[1]][origen[0]] = -1
+def bckt_caminos(tamMatriz, posAct, destino, agujerosNegros, estrellasGigantes, agujerosGusano,
+                zonasRecarga, celdasCargaRequerida, cargaActual, matrizInicial, soluciones, camino):
+    if es_valido(posAct[1], posAct[0], tamMatriz, matrizInicial) and es_viable(posAct[1], posAct[0], matrizInicial, cargaActual, agujerosNegros, celdasCargaRequerida, agujerosGusano):
+        print(destino == posAct, "------------------------------------------------------------------------------------------------------")
+        camino.append(posAct[:])
+        aux = matrizInicial[posAct[1]][posAct[0]]   # Guardar el valor original de la celda
+        cargaOriginal = cargaActual                 # Guardar la carga inicial
+        cargaActual -= aux
+        matrizInicial[posAct[1]][posAct[0]] = -1
         enEstrella = False
-        print("Posición válida y viable:", origen)
+        print("Posición válida y viable:", posAct)
         print("Cargando matriz:")
-        print(imprimir_matriz(matrizInicial))
-        print("Carga inicial:", cargaInicial)
+        # print(imprimir_matriz(matrizInicial))
+        print("Carga inicial:", cargaActual)
         print("Camino actual:", camino)
 
-        if origen == destino:
+        if posAct == destino:
             
             soluciones.append(camino[:])
-            for fila in matrizInicial:
-                print(' '.join(str(celda) for celda in fila) + '\n', end='')
+            # for fila in matrizInicial:
+            #     print(' '.join(str(celda) for celda in fila) + '\n', end='')
 
             print("Camino encontrado-------------------------------------------------:", camino)
-            matrizInicial[origen[1]][origen[0]] = aux
-            camino.pop()
-            
-            return
+            # matrizInicial[posAct[1]][posAct[0]] = aux
+            # camino.pop()
+            return camino[:]
 
         idx_estrella = None
         for i, e in enumerate(estrellasGigantes):
-            if e[0] == origen[0] and e[1] == origen[1]:
+            if e[0] == posAct[0] and e[1] == posAct[1]:
                 print("Está en estrella")
                 enEstrella = True
-                idx_estrella = i
+                idx_estrella = i 
                 break
 
         for e in zonasRecarga:
             print("Verificando zona de recarga")
-            if e[0] == origen[0] and e[1] == origen[1]:
+            if e[0] == posAct[0] and e[1] == posAct[1]:
                 print(f"Zona de recarga: {e[0]}, {e[1]}, {e[2]}")
                 print("Está en zona de recarga")
-                print(f'Carga inicial: {cargaInicial}')
-                cargaInicial *= e[2]
-                print(f'Carga después de recarga: {cargaInicial}')
+                print(f'Carga inicial: {cargaActual}')
+                cargaActual += aux
+                cargaActual *= e[2]
+                print(f'Carga después de recarga: {cargaActual}')
                 break
 
         for e in agujerosGusano:
-            if e["entrada"][0] == origen[0] and e["entrada"][1] == origen[1]:
-                print("Está en agujero de gusano")
-                costo_salida = matrizInicial[e["salida"][0]][e["salida"][1]]
-                print(f'Costo de salida: {costo_salida}')
-                cargaInicial -= costo_salida
-                origen[0], origen[1] = e["salida"][0], e["salida"][1]
-                print(f'Nueva posición después de agujero de gusano: {origen}')
-                camino.append(origen[:])
-                matrizInicial[origen[1]][origen[0]] = -1
+            if e[0][0] == posAct[0] and e[0][1] == posAct[1]:
+                print(f"Está en agujero de gusano: {e[0]}")
+                bckt_caminos(
+                tamMatriz, e[1], destino, agujerosNegros, estrellasGigantes,
+                agujerosGusano, zonasRecarga, celdasCargaRequerida, cargaActual, matrizInicial, soluciones, camino
+                )
                 break
-        
-        for e in celdasCargaRequerida:
-            if e["coordenada"][0] == origen[0] and e["coordenada"][1] == origen[1]:
-                print("Está en celda de carga requerida")
-                cargaInicial += aux
-                break
+            
 
-        print(f'Carga después de procesar la posición {origen}: {cargaInicial}')
+        print(f'Carga después de procesar la posición {posAct}: {cargaActual}')
         if enEstrella:
             print("Está en estrella gigante")
             print("Entrando a backtracking con estrellas gigantes")
-            agujeros_alrededor = buscar_ag(origen, MOVIMIENTOS, agujerosNegros)
+            agujeros_alrededor = buscar_ag(posAct, agujerosNegros)
             print(agujeros_alrededor)
             for agujero in agujeros_alrededor:
-                if agujero in agujerosNegros:
-                    idx_agujero = agujerosNegros.index(agujero)
-                    agujerosNegros.pop(idx_agujero)
-                    estrellasGigantes.pop(idx_estrella)
-                    nueva_pos = [origen[0] + agujero[0], origen[1] + agujero[1]]
-                    bckt_caminos(
-                        tamMatriz, nueva_pos, destino, agujerosNegros, estrellasGigantes,
-                        agujerosGusano, zonasRecarga, celdasCargaRequerida, cargaInicial, matrizInicial, soluciones, camino
-                    )
-                    agujerosNegros.insert(idx_agujero, agujero)
-                    estrellasGigantes.insert(idx_estrella, agujero)
-                    cargaInicial = cargaOriginal
-                    
+                idx_agujero = agujerosNegros.index(agujero)
+                agujerosNegros.pop(idx_agujero)
+                estrellasGigantes.pop(idx_estrella)
+                bckt_caminos(
+                    tamMatriz, agujero, destino, agujerosNegros, estrellasGigantes,
+                    agujerosGusano, zonasRecarga, celdasCargaRequerida, cargaActual, matrizInicial, soluciones, camino
+                )
+                agujerosNegros.insert(idx_agujero, agujero)
+                estrellasGigantes.insert(idx_estrella, agujero)
+
         for mov in MOVIMIENTOS:
-            nueva_pos = [origen[0] + mov[0], origen[1] + mov[1]]
+            nueva_pos = [posAct[0] + mov[0], posAct[1] + mov[1]]
             print("Probando nueva posición:", nueva_pos)
             bckt_caminos(
                 tamMatriz, nueva_pos, destino, agujerosNegros, estrellasGigantes,
-                agujerosGusano, zonasRecarga, celdasCargaRequerida, cargaInicial, matrizInicial, soluciones, camino
+                agujerosGusano, zonasRecarga, celdasCargaRequerida, cargaActual, matrizInicial, soluciones, camino
             )
         
-        cargaInicial = cargaOriginal
+        cargaActual = cargaOriginal
         print(f'Valor de auxiliar: {aux}')
-        print("Retrocediendo desde:", origen)
-        matrizInicial[origen[1]][origen[0]] = aux
+        print("Retrocediendo desde:", posAct)
+        matrizInicial[posAct[1]][posAct[0]] = aux
         camino.pop()
-        print("Volviendo atrás desde:", origen)
+        print("Volviendo atrás desde:", posAct)
         print("Camino actual después de retroceder:", camino)
-        print("Carga después de retroceder:", cargaInicial)
+        print("Carga después de retroceder:", cargaActual)
         print("Matriz después de retroceder:")
-        print(imprimir_matriz(matrizInicial))
-        
+        # print(imprimir_matriz(matrizInicial))
     return soluciones
 
 def es_valido(fila, col, tamM, M):
     print("Validando posición:", (col, fila))
-    if fila < 0 or fila >= tamM["filas"] or col < 0 or col >= tamM["columnas"] or M[fila][col] == -1:
+    if fila < 0 or fila >= tamM[1] or col < 0 or col >= tamM[0] or M[fila][col] == -1:
         print(f"Posición inválida: ({col}, {fila}) fuera de los límites o bloqueada.")
         return False
     print(f"Posición ({col}, {fila}) es válida.")
@@ -130,10 +120,10 @@ def es_valido(fila, col, tamM, M):
 
 def es_viable(fila, col, M, carga, agujerosNegros, cargasRequeridas, agujerosGusano):
     print(f"Verificando viabilidad de la posición ({col}, {fila}) con carga {carga}.")
-    if M[fila][col] > carga: 
+    if M[fila][col] > carga:
         print(f"Posición ({col}, {fila}) no viable: carga insuficiente. Necesita {M[fila][col]}, tiene {carga}.")
         return False
-    print(f"Posición ({col}, {fila}) tiene carga suficiente: {M[col][fila]} <= {carga}.")
+    print(f"Posición ({col}, {fila}) tiene carga suficiente: {M[fila][col]} <= {carga}.")
     
     for e in agujerosNegros:
         if e[0] == col and e[1] == fila: 
@@ -141,18 +131,17 @@ def es_viable(fila, col, M, carga, agujerosNegros, cargasRequeridas, agujerosGus
             return False
     print(f'En la posción ({col}, {fila}) no hay agujeros negros.')
     
-    
     for e in cargasRequeridas:
-        if e["coordenada"][0] == col and e["coordenada"][1] == fila:
-            if e["cargaMinima"] > carga:
-                print(f"Posición ({col}, {fila}) no viable: carga mínima requerida no cumplida. Necesita {e['cargaMinima']}, tiene {carga}.")
+        if e[0][0] == col and e[0][1] == fila:
+            if e[1] > carga:
+                print(f"Posición ({col}, {fila}) no viable: carga mínima requerida no cumplida. Necesita {e['cargaGastada']}, tiene {carga}.")
                 return False
             break
     print(f'La casilla no requiere carga')
     
     for e in agujerosGusano:
-        if e["entrada"][0] == col and e["entrada"][1] == fila:
-            costo = M[col][fila] + M[e["salida"][0]][e["salida"][1]]
+        if e[0][0] == col and e[0][1] == fila:
+            costo = M[fila][col] + M[e[1][1]][e[1][0]]
             if costo > carga:
                 print(f"Posición ({col}, {fila}) no viable: carga insuficiente para agujero de gusano.")
                 return False
@@ -160,10 +149,10 @@ def es_viable(fila, col, M, carga, agujerosNegros, cargasRequeridas, agujerosGus
     print(f"Posición ({col}, {fila}) es viable.")
     return True
 
-def buscar_ag(origen, movimientos, agujerosNegros):
+def buscar_ag(posAct, agujerosNegros):
     agujeros = []
-    for mov in movimientos:
-        posPosible = [origen[0] + mov[0], origen[1] + mov[1]]
+    for mov in MOVIMIENTOS:
+        posPosible = [posAct[0] + mov[0], posAct[1] + mov[1]]
         if posPosible in agujerosNegros:
             agujeros.append(posPosible)
     return agujeros

@@ -22,7 +22,7 @@ def laberinto_data():
     for fila in matriz['matrizInicial']:
         print(' '.join(str(celda) for celda in fila)) 
         
-    soluciones = bckt_caminos(matriz['tamMatriz'],
+    solucion = bckt_caminos(matriz['tamMatriz'],
                              matriz['origen'],
                              matriz['destino'],
                              matriz['agujerosNegros'],
@@ -36,7 +36,7 @@ def laberinto_data():
                              [])
     return jsonify({
         'matriz': matriz,
-        'soluciones': soluciones
+        'soluciones': solucion
     })
 
 @app.route('/validar-placas', methods=['POST'])

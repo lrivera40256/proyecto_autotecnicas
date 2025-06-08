@@ -1,58 +1,126 @@
 {
-  "tamMatriz": {
-    "filas": 3,
-    "columnas": 3
-  },
+  "tamMatriz": [
+    6,
+    5
+  ],
   "origen": [
     0,
     0
   ],
   "destino": [
-    2,
-    2
+    4,
+    4
   ],
   "agujerosNegros": [
     [
       1,
-      1
-    ]
-  ],
-  "estrellasGigantes": [],
-  "agujerosGusano": [
-    {
-      "entrada": [
-        0,
-        0
-      ],
-      "salida": [
-        2,
-        1
-      ]
-    }
-  ],
-  "zonasRecarga": [
-    [
-      2,
-      0,
-      7
-    ]
-  ],
-  "celdasCargaRequerida": [],
-  "cargaInicial": 4,
-  "matrizInicial": [
-    [
-      1,
-      1,
-      1
-    ],
-    [
-      1,
-      1,
       2
     ],
     [
+      3,
+      4
+    ]
+  ],
+  "estrellasGigantes": [
+    [
+      0,
+      4
+    ],
+    [
+      2,
+      1
+    ]
+  ],
+  "agujerosGusano": [
+    [
+      [
+        1,
+        5
+      ],
+      [
+        3,
+        0
+      ]
+    ],
+    [
+      [
+        2,
+        2
+      ],
+      [
+        4,
+        1
+      ]
+    ]
+  ],
+  "zonasRecarga": [
+    [
+      0,
+      3,
+      4
+    ],
+    [
+      2,
+      5,
+      3
+    ]
+  ],
+  "celdasCargaRequerida": [
+    [
+      [
+        1,
+        1
+      ],
+      5
+    ],
+    [
+      [
+        3,
+        3
+      ],
+      7
+    ]
+  ],
+  "cargaInicial": 1000,
+  "matrizInicial": [
+    [
+      3,
+      2,
       1,
+      4,
+      9,
+      0
+    ],
+    [
+      0,
+      5,
+      8,
+      2,
+      6,
+      3
+    ],
+    [
+      7,
+      4,
+      2,
       1,
+      0,
+      8
+    ],
+    [
+      9,
+      1,
+      6,
+      5,
+      2,
+      7
+    ],
+    [
+      3,
+      3,
+      7,
+      0,
+      4,
       1
     ]
   ]

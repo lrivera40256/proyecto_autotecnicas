@@ -1,8 +1,8 @@
 {
-  "tamMatriz": {
-    "filas": 35,
-    "columnas": 40
-  },
+  "tamMatriz": [
+    40,
+    35
+  ],
   "origen": [
     0,
     0
@@ -40,26 +40,26 @@
     ]
   ],
   "agujerosGusano": [
-    {
-      "entrada": [
+    [
+      [
         11,
         11
       ],
-      "salida": [
+      [
         13,
         13
       ]
-    },
-    {
-      "entrada": [
+    ],
+    [
+      [
         18,
         5
       ],
-      "salida": [
+      [
         21,
         6
       ]
-    }
+    ]
   ],
   "zonasRecarga": [
     [
@@ -114,22 +114,22 @@
     ]
   ],
   "celdasCargaRequerida": [
-    {
-      "coordenada": [
+    [
+      [
         9,
         9
       ],
-      "cargaGastada": 7
-    },
-    {
-      "coordenada": [
+      7
+    ],
+    [
+      [
         22,
         22
       ],
-      "cargaGastada": 12
-    }
+      12
+    ]
   ],
-  "cargaInicial": 200,
+  "cargaInicial": 100000,
   "matrizInicial": [
     [
       8,
