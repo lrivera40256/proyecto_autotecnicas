@@ -9,6 +9,7 @@
             display: grid;
             gap: 2px;
             margin-top: 20px;
+            position: relative;
         }
 
         .celda {
@@ -21,8 +22,17 @@
             font-size: 14px;
         }
 
-        .solucion {
-            background-color: lightgreen;
+        .celda.actual {
+        background-color: #32CD32;  /* Verde más oscuro */
+        transform: scale(1.1);
+        transition: all 0.3s ease;
+        z-index: 1;
+        box-shadow: 0 0 5px rgba(0,0,0,0.3);
+        }
+
+        .celda.solucion {
+            background-color: #90EE90;  /* Verde claro */
+            transition: background-color 0.3s ease;
         }
     </style>
 </head>
@@ -32,6 +42,13 @@
 
     <!-- Aquí se dibuja la matriz -->
     <div id="universo"></div>
+
+    <form id="formulario">
+        <input type="file" id="archivo" accept=".txt" />
+        <button type="submit">Validar Placas</button>
+    </form>
+    <pre id="resultado"></pre>
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
 
     <script src="/static/js/main.js"></script>
 </body>
