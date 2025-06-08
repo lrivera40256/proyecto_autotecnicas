@@ -1,5 +1,8 @@
-from flask import Flask, render_template, jsonify
+from flask import Flask, request, render_template, jsonify
+import os
+from werkzeug.utils import secure_filename
 from services.bckt import bckt_caminos
+from services.automata import procesar_archivo
 from utils.lector_json import lector_json
 
 app = Flask(__name__)
@@ -35,6 +38,24 @@ def laberinto_data():
         'matriz': matriz,
         'soluciones': soluciones
     })
+
+@app.route('/validar-placas', methods=['POST'])
+def validar_placas():
+    if 'archivo' not in request.files:
+        return jsonify({'error': 'No se envió ningún archivo'}), 400
+
+    archivo = request.files['archivo']
+    if archivo.filename == '':
+        return jsonify({'error': 'Nombre de archivo vacío'}), 400
+
+    nombre_seguro = secure_filename(archivo.filename)
+    ruta_temporal = os.path.join('data', nombre_seguro)
+    archivo.save(ruta_temporal)
+
+    resultados = procesar_archivo(ruta_temporal)
+    os.remove(ruta_temporal)
+
+    return jsonify({'resultado': resultados})
 
 if __name__ == "__main__":
     app.run(debug=True)
