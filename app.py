@@ -19,7 +19,8 @@ def laberinto_data():
     for fila in matriz['matrizInicial']:
         print(' '.join(str(celda) for celda in fila)) 
         
-    solucion = bckt_caminos(matriz['tamMatriz'],
+    soluciones = []
+    encontrado = bckt_caminos(matriz['tamMatriz'],
                              matriz['origen'],
                              matriz['destino'],
                              matriz['agujerosNegros'],
@@ -29,11 +30,11 @@ def laberinto_data():
                              matriz['celdasCargaRequerida'],
                              matriz['cargaInicial'],
                              matriz['matrizInicial'],
-                             [],
+                             soluciones,
                              [])
     return jsonify({
         'matriz': matriz,
-        'soluciones': solucion
+        'soluciones': soluciones
     })
 
 if __name__ == "__main__":
