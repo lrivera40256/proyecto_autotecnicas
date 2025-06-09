@@ -1,8 +1,8 @@
 import copy
 import sys
-# sys.setrecursionlimit(10**6)  # Establece el límite a un millón (ajusta según necesidad)
-
 from flask import jsonify
+import math
+
 # Definir los 8 movimientos posibles
 # (columna, fila)
 MOVIMIENTOS = [
@@ -15,6 +15,20 @@ MOVIMIENTOS = [
     (-1, 0),  # Izquierda
     (-1, -1)  # Arriba izquierda
 ]
+
+def calcular_distancia(punto1, punto2):
+    return math.sqrt((punto2[0] - punto1[0])**2 + (punto2[1] - punto1[1])**2)
+
+def ordenar_movimientos(posicion_actual, destino, movimientos):
+    # Ordenar movimientos según la distancia al destino
+    movimientos_ordenados = []
+    for mov in movimientos:
+        nueva_pos = [posicion_actual[0] + mov[0], posicion_actual[1] + mov[1]]
+        distancia = calcular_distancia(nueva_pos, destino)
+        movimientos_ordenados.append((mov, distancia))
+    
+    movimientos_ordenados.sort(key=lambda x: x[1])
+    return [m[0] for m in movimientos_ordenados]
 
 def imprimir_matriz(matriz):
     for fila in matriz:
@@ -78,7 +92,10 @@ def bckt_caminos(tamMatriz, posAct, destino, agujerosNegros, estrellasGigantes, 
                 agujerosNegros.insert(idx_agujero, agujero)
                 estrellasGigantes.insert(idx_estrella, agujero)
 
-        for mov in MOVIMIENTOS:
+        # Obtener movimientos ordenados según la distancia al destino
+        movimientos_ordenados = ordenar_movimientos(posAct, destino, MOVIMIENTOS)
+        
+        for mov in movimientos_ordenados:
             nueva_pos = [posAct[0] + mov[0], posAct[1] + mov[1]]
             if bckt_caminos(
                 tamMatriz, nueva_pos, destino, agujerosNegros, estrellasGigantes,

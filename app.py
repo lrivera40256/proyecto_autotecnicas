@@ -98,7 +98,6 @@ def upload_json():
 #         'soluciones': soluciones
 #     })
 
-
 @app.route('/validar', methods=['POST'])
 def validar():
     if 'archivo' not in request.files:
