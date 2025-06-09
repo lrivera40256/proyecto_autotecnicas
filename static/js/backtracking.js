@@ -1,6 +1,35 @@
-
-
 document.addEventListener("DOMContentLoaded", () => {
+    cargarLaberintoInicial();
+});
+
+function handleFileUpload(event) {
+    const file = event.target.files[0];
+    if (file) {
+        const formData = new FormData();
+        formData.append('file', file);
+
+        fetch('/upload-json', {
+            method: 'POST',
+            body: formData
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.error) {
+                alert(data.error);
+                return;
+            }
+            console.log("Datos recibidos:", data);
+            dibujar_universo(data.matriz);
+            animarSolucion(data.soluciones, data.matriz);
+        })
+        .catch(error => {
+            console.error("Error al procesar el archivo:", error);
+            alert('Error al procesar el archivo');
+        });
+    }
+}
+
+function cargarLaberintoInicial() {
     fetch("/lab-interestelar")
         .then(response => response.json())
         .then(data => {
@@ -16,7 +45,7 @@ document.addEventListener("DOMContentLoaded", () => {
         .catch(error => {
             console.error("Error al cargar los datos:", error);
         });
-});
+}
 
 function dibujar_universo(matriz) {
     const contenedor = document.getElementById("universo");
@@ -24,7 +53,7 @@ function dibujar_universo(matriz) {
     const filas = matriz.tamMatriz[1];
     const columnas = matriz.tamMatriz[0];
 
-    contenedor.style.gridTemplateColumns = `repeat(${columnas}, 30px)`;
+    contenedor.style.gridTemplateColumns = `repeat(${columnas}, 25px)`;
     contenedor.innerHTML = "";
 
     for (let i = 0; i < filas; i++) {
@@ -33,10 +62,40 @@ function dibujar_universo(matriz) {
             celda.className = "celda";
             celda.dataset.fila = i;
             celda.dataset.col = j;
-            celda.textContent = `${i},${j}`;
+            
+            if (esAgujeroNegro(j, i, matriz.agujerosNegros)) {
+                celda.classList.add("agujero-negro");
+                celda.innerHTML = '🕳️';
+            } else if (esAgujeroGusano(j, i, matriz.agujerosGusano)) {
+                celda.classList.add("agujero-gusano");
+                celda.innerHTML = '🌀';
+            } else if (esEstrellaGigante(j, i, matriz.estrellasGigantes)) {
+                celda.classList.add("estrella-gigante");
+                celda.innerHTML = '⭐';
+            } else if (esZonaRecarga(j, i, matriz.zonasRecarga)) {
+                celda.classList.add("zona-recarga");
+                celda.innerHTML = '⚡';
+            }
+
             contenedor.appendChild(celda);
         }
     }
+}
+
+function esAgujeroNegro(x, y, agujerosNegros) {
+    return agujerosNegros.some(agujero => agujero[0] === x && agujero[1] === y);
+}
+
+function esAgujeroGusano(x, y, agujerosGusano) {
+    return agujerosGusano.some(agujero => agujero[0][0] === x && agujero[0][1] === y);
+}
+
+function esEstrellaGigante(x, y, estrellasGigantes) {
+    return estrellasGigantes.some(estrella => estrella[0] === x && estrella[1] === y);
+}
+
+function esZonaRecarga(x, y, zonasRecarga) {
+    return zonasRecarga.some(zona => zona[0] === x && zona[1] === y);
 }
 
 function animarSolucion(soluciones, matriz, delay = 300) {
@@ -67,6 +126,10 @@ function animarSolucion(soluciones, matriz, delay = 300) {
         for (let i = 0; i < caminosAMostrar.length; i++) {
             contenedor.querySelectorAll(".celda.solucion").forEach(celda => {
                 celda.classList.remove("solucion");
+
+                if (celda.querySelector('.rocket')) {
+                    celda.querySelector('.rocket').remove();
+                }
             });
 
             const camino = caminosAMostrar[i];
@@ -86,7 +149,17 @@ function animarSolucion(soluciones, matriz, delay = 300) {
                     celda.classList.add("solucion");  
                     celda.classList.add(`camino${i + 1}`); // Añadimos clase específica para cada camino
                     celda.classList.add("actual");
+
+                    const contenidoOriginal = celda.innerHTML;
+
+                    celda.innerHTML = '🚀';
+                    
                     await new Promise(resolve => setTimeout(resolve, delay));
+
+                    if (coordenada !== camino[camino.length - 1]) {
+                        celda.innerHTML = contenidoOriginal;
+                    }
+                    
                     celda.classList.remove("actual");
                 }
             }
